@@ -1,0 +1,79 @@
+---
+import DashboardLayout from '../../../layouts/DashboardLayout.astro';
+import ChatList from '../../../components/chat/ChatList';
+import { createServerClient, parseCookieHeader } from "@supabase/ssr";
+
+// 1. CONFIGURAR CLIENTE SUPABASE PARA SSR (SERVIDOR)
+// En lugar de importar 'supabase' global, creamos uno local que pueda leer las cookies
+const supabase = createServerClient(
+  import.meta.env.PUBLIC_SUPABASE_URL,
+  import.meta.env.PUBLIC_SUPABASE_ANON_KEY,
+  {
+    cookies: {
+      getAll() {
+        return parseCookieHeader(Astro.request.headers.get("Cookie") ?? "") as any;
+      },
+      setAll(cookiesToSet) {
+        cookiesToSet.forEach(({ name, value, options }) => {
+          Astro.cookies.set(name, value, options);
+        });
+      },
+    },
+  }
+);
+
+// 2. VERIFICAR USUARIO (DEBUG)
+const { data: { user } } = await supabase.auth.getUser();
+console.log('Usuario autenticado:', user?.email); // Debería salir tu email en la terminal
+
+// 3. CONSULTA DE CHATS
+const { data: contacts, error } = await supabase
+  .from('contacts')
+  .select(`
+    id,
+    name,
+    phone_number,
+    unread_count,
+    avatar_url, 
+    labels,
+    updated_at,
+    messages (
+      content,
+      created_at,
+      direction,
+      status
+    )
+  `)
+  .order('created_at', { foreignTable: 'messages', ascending: false })
+  .limit(1, { foreignTable: 'messages' });
+
+if (error) {
+  console.error("Error fetching chats:", error);
+}
+
+// 4. ORDENAMIENTO EN JAVASCRIPT
+const sortedContacts = contacts?.sort((a, b) => {
+  const dateA = new Date(a.messages?.[0]?.created_at || a.updated_at || 0);
+  const dateB = new Date(b.messages?.[0]?.created_at || b.updated_at || 0);
+  return dateB.getTime() - dateA.getTime();
+}) || [];
+---
+
+<DashboardLayout title="Bandeja de Entrada">
+  <div class="flex h-[calc(100vh-4rem)] -m-6 bg-surface">
+    <ChatList client:load contacts={sortedContacts as any } />
+
+    <div class="flex-1 hidden md:flex flex-col items-center justify-center bg-surface/50 text-txt-body/50">
+      <div class="p-8 bg-panel rounded-2xl shadow-sm border border-border text-center max-w-md">
+        <div class="w-16 h-16 bg-primary/10 text-primary rounded-full flex items-center justify-center mx-auto mb-4">
+          <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-3.582 8-8 8a8.066 8.066 0 01-3.64-1.28L4 21l2.333-3.05C4.24 16.51 3 14.38 3 12c0-4.418 3.582-8 8-8s8 3.582 8 8z" />
+          </svg>
+        </div>
+        <h3 class="text-xl font-bold text-txt-title mb-2">Selecciona un chat</h3>
+        <p class="text-sm">Elige una conversación de la lista para ver el historial, enviar mensajes o gestionar notas del cliente.</p>
+      </div>
+    </div>
+
+  </div>
+</DashboardLayout>

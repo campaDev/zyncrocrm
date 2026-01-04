@@ -1,0 +1,54 @@
+---
+import DashboardLayout from '../../layouts/DashboardLayout.astro';
+---
+
+<DashboardLayout title="Vista General">
+  <div class="max-w-5xl mx-auto space-y-6">
+    <div class="bg-linear-to-r from-primary to-primary-hover rounded-2xl p-8 text-white shadow-lg shadow-primary/20">
+      <h1 class="text-3xl font-bold mb-2">¡Hola, Vendedor! 👋</h1>
+      <p class="opacity-90 max-w-xl">
+        Bienvenido a Zyncro. Aquí tienes un resumen de tu actividad hoy. 
+        Tu sistema está conectado y listo para recibir mensajes de WhatsApp.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="bg-panel border border-border p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+        <div class="flex items-center gap-4 mb-4">
+          <div class="p-3 bg-blue-500/10 text-blue-600 rounded-lg">
+            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-3.582 8-8 8a8.066 8.066 0 01-3.64-1.28L4 21l2.333-3.05C4.24 16.51 3 14.38 3 12c0-4.418 3.582-8 8-8s8 3.582 8 8z" /></svg>
+          </div>
+          <div>
+            <p class="text-sm text-txt-body opacity-70">Mensajes Nuevos</p>
+            <h3 class="text-2xl font-bold text-txt-title">12</h3>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-panel border border-border p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+        <div class="flex items-center gap-4 mb-4">
+          <div class="p-3 bg-green-500/10 text-green-600 rounded-lg">
+             <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+          </div>
+          <div>
+            <p class="text-sm text-txt-body opacity-70">Clientes Activos</p>
+            <h3 class="text-2xl font-bold text-txt-title">48</h3>
+          </div>
+        </div>
+      </div>
+
+       <div class="bg-panel border border-border p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+        <div class="flex items-center gap-4 mb-4">
+          <div class="p-3 bg-purple-500/10 text-purple-600 rounded-lg">
+             <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+          </div>
+          <div>
+            <p class="text-sm text-txt-body opacity-70">Tiempo Respuesta</p>
+            <h3 class="text-2xl font-bold text-txt-title">2m</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+  </div>
+</DashboardLayout>

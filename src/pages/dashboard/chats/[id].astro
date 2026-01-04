@@ -1,0 +1,82 @@
+---
+import DashboardLayout from '../../../layouts/DashboardLayout.astro';
+import ChatList from '../../../components/chat/ChatList';
+import ChatWindow from '../../../components/chat/ChatWindow';
+import { createServerClient, parseCookieHeader } from "@supabase/ssr";
+
+const { id } = Astro.params;
+
+// 1. CLIENTE SUPABASE SSR (Con el arreglo 'as any')
+const supabase = createServerClient(
+  import.meta.env.PUBLIC_SUPABASE_URL,
+  import.meta.env.PUBLIC_SUPABASE_ANON_KEY,
+  {
+    cookies: {
+      getAll() {
+        return parseCookieHeader(Astro.request.headers.get("Cookie") ?? "") as any;
+      },
+      setAll(cookiesToSet) {
+        cookiesToSet.forEach(({ name, value, options }) => {
+          Astro.cookies.set(name, value, options);
+        });
+      },
+    },
+  }
+);
+// MARCAR COMO LEÍDO AL ENTRAR ---
+// Si hay mensajes sin leer, los reseteamos a 0 en la base de datos
+await supabase
+  .from('contacts')
+  .update({ unread_count: 0 })
+  .eq('id', id);
+// ------------------------------------------
+
+
+// 2. CARGAR SIDEBAR (Lista de chats)
+const { data: contactsData } = await supabase
+  .from('contacts')
+  .select(`
+    id, name, phone_number, unread_count, avatar_url, updated_at,
+    messages ( content, created_at, direction )
+  `)
+  .order('created_at', { foreignTable: 'messages', ascending: false })
+  .limit(1, { foreignTable: 'messages' });
+
+const sortedContacts = contactsData?.sort((a, b) => {
+  const dateA = new Date(a.messages?.[0]?.created_at || a.updated_at || 0);
+  const dateB = new Date(b.messages?.[0]?.created_at || b.updated_at || 0);
+  return dateB.getTime() - dateA.getTime();
+}) || [];
+
+
+// 3. CARGAR CHAT ACTIVO (Info del contacto seleccionado)
+const { data: activeContact } = await supabase
+  .from('contacts')
+  .select('*')
+  .eq('id', id)
+  .single();
+
+// 4. CARGAR MENSAJES DE LA CONVERSACIÓN
+const { data: messages } = await supabase
+  .from('messages')
+  .select('*')
+  .eq('contact_id', id)
+  .order('created_at', { ascending: true });
+
+
+// Si el ID es inválido, volver al inicio
+if (!activeContact) {
+  return Astro.redirect('/dashboard/chats');
+}
+---
+
+<DashboardLayout title={`Chat con ${activeContact.name}`}>
+  <div class="flex h-[calc(100vh-4rem)] -m-6 bg-surface">
+    <ChatList client:load contacts={sortedContacts as any} />
+
+    <div class="flex-1 flex flex-col h-full overflow-hidden border-l border-border">
+       <ChatWindow client:visible contact={activeContact} messages={messages} />
+    </div>
+
+  </div>
+</DashboardLayout>

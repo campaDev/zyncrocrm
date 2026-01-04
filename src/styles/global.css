@@ -1,0 +1,63 @@
+/* Importamos el framework completo (la nueva forma en v4) */
+@import "tailwindcss";
+
+/* CONFIGURACIÓN DEL TEMA (Tailwind v4)
+  Aquí definimos los valores del diseño. Tailwind leerá esto 
+  y generará las clases automáticamente.
+*/
+@theme {
+  /* --- PALETA BASE --- */
+  /* Definimos los valores OKLCH directamente. 
+     Tailwind v4 maneja la opacidad automáticamente con esta sintaxis. */
+
+  /* Surface: Fondo principal */
+  --color-surface: oklch(98.5% 0.01 240);
+
+  /* Panel: Tarjetas y modales */
+  --color-panel: oklch(100% 0 0);
+
+  /* Border: Líneas sutiles */
+  --color-border: oklch(92% 0.02 240);
+
+  /* Texto */
+  --color-txt-body: oklch(35% 0.03 240);
+  --color-txt-title: oklch(15% 0.04 240);
+
+  /* --- BRANDING (Zyncro) --- */
+  /* Primary: El color principal */
+  --color-primary: oklch(60% 0.22 270);
+  /* Primary Hover: Calculado relativo al primary (un poco más oscuro) */
+  /* Usamos sintaxis CSS moderna 'from' para derivar el color */
+  --color-primary-hover: oklch(from var(--color-primary) calc(l - 0.05) c h);
+
+  /* Estados */
+  --color-success: oklch(65% 0.18 150);
+  --color-error: oklch(60% 0.2 25);
+  /* Tipografías (Opcional, si quisieras cambiar la sans por defecto) */
+  /* --font-sans: "Inter", ui-sans-serif, system-ui; */
+}
+
+/* CAPA BASE
+  Aplicamos los valores por defecto al HTML/Body 
+*/
+@layer base {
+  html,
+  body {
+    @apply h-full w-full;
+    background-color: var(--color-surface);
+    color: var(--color-txt-body);
+  }
+  /* Scrollbars personalizados (Webkit) */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: oklch(from var(--color-border) l c h / 0.8);
+    border-radius: 4px;
+  }
+}
+

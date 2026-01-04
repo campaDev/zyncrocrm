@@ -1,0 +1,66 @@
+---
+import LayoutBase from './LayoutBase.astro';
+import LogoutButton from '../components/auth/LogoutButton';
+
+interface Props {
+  title: string;
+}
+const { title } = Astro.props;
+---
+
+<LayoutBase title={title}>
+  <div class="flex h-screen overflow-hidden bg-surface">
+    
+    <aside class="w-64 bg-panel border-r border-border hidden md:flex flex-col">
+      
+      <div class="h-16 flex items-center px-6 border-b border-border">
+        <span class="text-xl mr-2">⚡</span>
+        <span class="font-bold text-txt-title tracking-tight">Zyncro CRM</span>
+      </div>
+
+      <nav class="flex-1 p-4 space-y-1 overflow-y-auto">
+        <a href="/dashboard" class="flex items-center gap-3 px-3 py-2 bg-primary/10 text-primary rounded-lg font-medium transition-colors">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+          </svg>
+          Dashboard
+        </a>
+
+        <a href="/dashboard/chats" class="flex items-center gap-3 px-3 py-2 text-txt-body hover:bg-surface hover:text-txt-title rounded-lg font-medium transition-colors">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+          </svg>
+          Chats
+        </a>
+        
+        <a href="#" class="flex items-center gap-3 px-3 py-2 text-txt-body hover:bg-surface hover:text-txt-title rounded-lg font-medium transition-colors">
+           <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+          </svg>
+          Contactos
+        </a>
+      </nav>
+
+      <div class="p-4 border-t border-border">
+        <LogoutButton client:load />
+      </div>
+    </aside>
+
+    <main class="flex-1 flex flex-col h-full relative overflow-hidden">
+      <header class="h-16 bg-panel border-b border-border flex items-center justify-between px-6 shadow-sm z-10">
+        <h2 class="text-lg font-semibold text-txt-title">{title}</h2>
+        
+        <div class="flex items-center gap-3">
+           <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center text-xs font-bold ring-2 ring-white">
+             ME
+           </div>
+        </div>
+      </header>
+
+      <div class="flex-1 overflow-y-auto p-6 scroll-smooth">
+        <slot />
+      </div>
+    </main>
+
+  </div>
+</LayoutBase>
